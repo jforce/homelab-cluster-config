@@ -1,2 +1,0 @@
-route:
-  host: user-workload-grafana.apps.${CLUSTER_BASE_DOMAIN}

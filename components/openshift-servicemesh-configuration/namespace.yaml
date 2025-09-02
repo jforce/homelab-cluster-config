@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    kubernetes.io/metadata.name: istio-system
-    argocd.argoproj.io/managed-by: openshift-gitops
-    topology.istio.io/network: network-${CLUSTER_NAME}
-
-  name: istio-system

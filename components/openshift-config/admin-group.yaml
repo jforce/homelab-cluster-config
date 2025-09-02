@@ -3,5 +3,4 @@ apiVersion: user.openshift.io/v1
 metadata:
   name: cluster-admin
 users:
-  - raffa
-  - obedin
+  - james
