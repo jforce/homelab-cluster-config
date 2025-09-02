@@ -88,7 +88,7 @@ data:
           resources:
             requests:
               storage: 100Gi
-          storageClassName: ontap-nas
+          storageClassName: lvms-vg1
         status: {}
     prometheusOperator:
       resources:

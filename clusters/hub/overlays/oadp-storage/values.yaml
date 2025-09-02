@@ -1,22 +1,20 @@
 tenant:
   configSecret:
     name: oadp-env-configuration
-    accessKey: oadp 
-    secretKey: oadpoadp  
+    accessKey: oadp
+    secretKey: oadpoadp
   configuration:
     name: oadp-env-configuration
-  name: oadp  
+  name: oadp
   pools:
     - name: pool-0
       servers: 1
-      storageClassName: ontap-nas
+      storageClassName: lvms-vg1
       # these values are not recommended in production. They are here just to keep the costs constrained.
       volumesPerServer: 1
-      size: 500Gi      
+      size: 100Gi
   buckets:
     - name: oadp
       objectLock: false
-  certificate:    
-    requestAutoCert: false         
-
-                        
+  certificate:
+    requestAutoCert: false
