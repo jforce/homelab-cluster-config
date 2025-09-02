@@ -5,14 +5,14 @@ namespace: acm-policies
 
 resources:
 - namespace.yaml
-- placement.yaml
-- managedclustersetbinding.yaml
+#- placement.yaml
+#- managedclustersetbinding.yaml
 - policy-service-account.yaml
-- propagate-secret-policy.yaml
-- servicemesh-federation-policy.yaml
-- kuadrant-coredns-policy.yaml
-- percona-root-ca-policy.yaml
-- vm-dnsrecord-policy.yaml
+#- propagate-secret-policy.yaml
+#- servicemesh-federation-policy.yaml
+#- kuadrant-coredns-policy.yaml
+#- percona-root-ca-policy.yaml
+#- vm-dnsrecord-policy.yaml
 
 generators:
 - policy-generator-config.yaml
