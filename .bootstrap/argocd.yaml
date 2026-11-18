@@ -620,7 +620,25 @@ data:
         command:
           - sh
           - "-c"
-          - "set -o pipefail && kustomize build --load-restrictor LoadRestrictionsNone --enable-helm --enable-alpha-plugins . | envsub"
+          - |
+            # envsub leaves references to unset variables untouched and exits 0, so fail the render (and block the sync)
+            # unless every required variable is present, non-empty and contains no unresolved placeholder.
+            # Written without shell variables because .bootstrap/argocd.yaml is itself piped through envsubst.
+            set -o pipefail
+            if [ "$(env | grep -cE '^(CLUSTER_NAME|CLUSTER_BASE_DOMAIN|PLATFORM_BASE_DOMAIN|HUB_BASE_DOMAIN|INFRA_GITOPS_REPO)=[^$]+$')" -ne 5 ]; then
+              echo "setenv-cmp-plugin: CLUSTER_NAME, CLUSTER_BASE_DOMAIN, PLATFORM_BASE_DOMAIN, HUB_BASE_DOMAIN and INFRA_GITOPS_REPO must be set and resolved in the sidecar (restart the repo-server after changing the environment-variables ConfigMap)" >&2
+              exit 1
+            fi
+            # Post-check: buffer the rendered output and only emit it if no reference to a required variable survived envsub.
+            kustomize build --load-restrictor LoadRestrictionsNone --enable-helm --enable-alpha-plugins . | envsub | awk '
+              { line[NR] = $0 }
+              /\$\{ *(CLUSTER_NAME|CLUSTER_BASE_DOMAIN|PLATFORM_BASE_DOMAIN|HUB_BASE_DOMAIN|INFRA_GITOPS_REPO)[^}]*\}/ {
+                if (++bad <= 10) print "setenv-cmp-plugin: unresolved variable at rendered line " NR ": " substr($0, 1, 200) > "/dev/stderr"
+              }
+              END {
+                if (bad) { print "setenv-cmp-plugin: " bad " rendered line(s) still contain required variables after envsub, refusing to emit manifests" > "/dev/stderr"; exit 1 }
+                for (i = 1; i <= NR; i++) print line[i]
+              }'
       discover:
         fileName: kustomization.yaml
 ---
