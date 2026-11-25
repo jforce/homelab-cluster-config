@@ -26,6 +26,8 @@ object-templates-raw: |
           repoURL: '{{hub (lookup "v1" "ConfigMap" "openshift-gitops" "environment-variables").data.INFRA_GITOPS_REPO hub}}'  # Can point to either a Helm chart repo or a git repo.
           targetRevision: '{{hub (index (lookup "v1" "ConfigMap" "openshift-gitops" "cluster-versions").data .ManagedClusterName) hub}}'  # For Helm, this refers to the chart version.
           path: clusters/{{ fromClusterClaim "name" }}  # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+          plugin:
+            name: setenv-cmp-plugin-v1.0  # explicit, so a failed plugin discovery can't fall back to native Kustomize
 
         # Destination cluster and namespace to deploy the application
         destination:

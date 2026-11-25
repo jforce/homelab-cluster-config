@@ -20,6 +20,11 @@ default:
     source:
       repoURL: ${INFRA_GITOPS_REPO}
       targetRevision: HEAD
+      # Pin the envsub CMP explicitly. With discovery only, a failed/slow discovery call to the sidecar makes
+      # Argo CD silently fall back to native Kustomize, emitting raw ${VARS}. Name is <metadata.name>-<spec.version>.
+      extraSourceFields: |
+        plugin:
+          name: setenv-cmp-plugin-v1.0
     syncOptions:
     - ApplyOutOfSyncOnly=true
     - PrunePropagationPolicy=foreground
